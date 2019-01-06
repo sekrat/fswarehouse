@@ -1,0 +1,6 @@
+github.com/sekrat/sekrat v1.0.1 h1:Tfyo5M+u2q/oVFrjcpi4j0DIJnq9hnL+IXGmygMi8p8=
+github.com/sekrat/sekrat v1.0.1/go.mod h1:vLtyPWocwHImUnQ6kFXrImZ+CXrdNhM0GiosYqu0oko=
+github.com/spf13/afero v1.2.0 h1:O9FblXGxoTc51M+cqr74Bm2Tmt4PvkA5iu/j8HrkNuY=
+github.com/spf13/afero v1.2.0/go.mod h1:9ZxEEn6pIJ8Rxe320qSDBk6AsU0r9pR7Q4OcevTdifk=
+golang.org/x/text v0.3.0 h1:g61tztE5qeGQ89tm6NTjjM9VPIm088od1l6aSorWRWg=
+golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
