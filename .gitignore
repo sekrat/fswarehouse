@@ -1,0 +1,6 @@
+# Common editor swap files
+*~
+*.swp
+
+# Coverage reports
+coverage.out
