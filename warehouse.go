@@ -1,3 +1,5 @@
+// Package fswarehouse provides a sekrat.Warehouse implemntation that saves data
+// to the local filesystem.
 package fswarehouse
 
 import (
@@ -11,10 +13,12 @@ import (
 	"github.com/sekrat/sekrat"
 )
 
+// Warehouse is a sekrat.Warehouse that saves data to the local filesystem.
 type Warehouse struct {
 	BaseDir string
 }
 
+// IDs returns the array of all secret IDs known to the Warehouse.
 func (warehouse *Warehouse) IDs() []string {
 	warehouse.setup()
 
@@ -38,6 +42,12 @@ func (warehouse *Warehouse) IDs() []string {
 	return keys
 }
 
+// Store takes a secret ID and a chunk of data, saves the data indexed by the
+// ID, and returns an error. If there are problems along the way, the error is
+// populated. Otherwise, the error is nil.
+//
+// Note: As the data saved by this Warehouse is encoded via base64, it is
+// decoded before being returned.
 func (warehouse *Warehouse) Store(id string, data []byte) error {
 	warehouse.setup()
 
@@ -58,6 +68,12 @@ func (warehouse *Warehouse) Store(id string, data []byte) error {
 	return nil
 }
 
+// Retrieve takes a secret id and returns the data for that secret and an error.
+// If there are problems along the way, the data is nil and the error is
+// populated. Otherwise, the data is populated and the error is nil.
+//
+// Note: To avoid encoding issues upon load, the data is encoded via base64
+// before it is saved.
 func (warehouse *Warehouse) Retrieve(id string) ([]byte, error) {
 	warehouse.setup()
 
@@ -83,6 +99,7 @@ func (warehouse *Warehouse) setup() {
 	CreateDir(warehouse.BaseDir, 0755)
 }
 
+// New takes a base path and returns a Warehouse (as a sekrat.Warehouse).
 func New(baseDir string) sekrat.Warehouse {
 	abs, err := filepath.Abs(baseDir)
 	if err == nil {
@@ -91,3 +108,19 @@ func New(baseDir string) sekrat.Warehouse {
 
 	return &Warehouse{BaseDir: baseDir}
 }
+
+/*
+Copyright 2019 Dennis Walters
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/

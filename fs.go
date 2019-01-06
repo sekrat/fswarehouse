@@ -58,72 +58,22 @@ func Walk(path string, walkFunc filepath.WalkFunc) error {
 	return afero.Walk(Root, path, walkFunc)
 }
 
-func Copy(path string, targetPath string, mode os.FileMode) error {
-	infile, err := Root.Open(path)
-	if err != nil {
-		return err
-	}
-	defer infile.Close()
-
-	if FileExists(targetPath) {
-		rmerr := Root.Remove(targetPath)
-		if rmerr != nil {
-			return rmerr
-		}
-	}
-
-	outfile, err := Root.Create(targetPath)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		cerr := outfile.Close()
-		if err == nil {
-			err = cerr
-		}
-	}()
-
-	_, err = io.Copy(outfile, infile)
-	if err != nil {
-		return err
-	}
-
-	err = outfile.Sync()
-	return err
-}
-
-func DirCopy(source string, target string) error {
-	if !FileExists(source) {
-		return fmt.Errorf("%s does not exist", source)
-	}
-
-	walkFunc := func(path string, info os.FileInfo, err error) error {
-		targetPath := target + strings.TrimPrefix(path, source)
-
-		if info.IsDir() {
-			return CreateDir(targetPath, info.Mode())
-		} else {
-			return Copy(path, targetPath, info.Mode())
-		}
-	}
-
-	return Walk(source, walkFunc)
-}
-
-func ReadDir(path string) ([]os.FileInfo, error) {
-	return afero.ReadDir(Root, path)
-}
-
-func Basename(path string) string {
-	return filepath.Base(path)
-}
-
 func Stat(path string) (os.FileInfo, error) {
 	return Root.Stat(path)
 }
 
-func Executable(path string) bool {
-	info, _ := Stat(path)
+/*
+Copyright 2019 Dennis Walters
 
-	return (info.Mode()&0100 == 0100)
-}
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
