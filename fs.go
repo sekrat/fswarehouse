@@ -1,20 +1,19 @@
 package fswarehouse
 
 import (
-	"fmt"
-	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/spf13/afero"
 )
 
-var Root = afero.NewOsFs()
+type fs struct {
+	root afero.Fs
+}
 
-var CreateDir = func(path string, mode os.FileMode) error {
-	if !FileExists(path) {
-		err := Root.MkdirAll(path, mode)
+func (fs *fs) CreateDir(path string, mode os.FileMode) error {
+	if !fs.fileExists(path) {
+		err := fs.root.MkdirAll(path, mode)
 		if err != nil {
 			return err
 		}
@@ -23,8 +22,8 @@ var CreateDir = func(path string, mode os.FileMode) error {
 	return nil
 }
 
-var FileExists = func(path string) bool {
-	_, err := Root.Stat(path)
+func (fs *fs) fileExists(path string) bool {
+	_, err := fs.root.Stat(path)
 
 	if os.IsNotExist(err) {
 		return false
@@ -33,20 +32,8 @@ var FileExists = func(path string) bool {
 	return true
 }
 
-var DirectoryExists = func(path string) bool {
-	if !FileExists(path) {
-		return false
-	}
-
-	if !IsDir(path) {
-		return false
-	}
-
-	return true
-}
-
-var IsDir = func(path string) bool {
-	info, err := Root.Stat(path)
+func (fs *fs) isDir(path string) bool {
+	info, err := fs.root.Stat(path)
 	if err != nil {
 		return false
 	}
@@ -54,12 +41,12 @@ var IsDir = func(path string) bool {
 	return info.IsDir()
 }
 
-func Walk(path string, walkFunc filepath.WalkFunc) error {
-	return afero.Walk(Root, path, walkFunc)
+func (fs *fs) walk(path string, walkFunc filepath.WalkFunc) error {
+	return afero.Walk(fs.root, path, walkFunc)
 }
 
-func Stat(path string) (os.FileInfo, error) {
-	return Root.Stat(path)
+func newfs() *fs {
+	return &fs{root: afero.NewOsFs()}
 }
 
 /*

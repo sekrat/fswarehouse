@@ -11,11 +11,13 @@ import (
 	"strings"
 
 	"github.com/sekrat/sekrat"
+	"github.com/spf13/afero"
 )
 
 // Warehouse is a sekrat.Warehouse that saves data to the local filesystem.
 type Warehouse struct {
 	BaseDir string
+	fs      fs
 }
 
 // IDs returns the array of all secret IDs known to the Warehouse.
@@ -106,7 +108,7 @@ func New(baseDir string) sekrat.Warehouse {
 		baseDir = abs
 	}
 
-	return &Warehouse{BaseDir: baseDir}
+	return &Warehouse{BaseDir: baseDir, fs: &real{fs: afero.NewOsFs()}}
 }
 
 /*
